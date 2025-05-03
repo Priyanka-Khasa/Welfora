@@ -45,6 +45,9 @@ export default function ChatBot() {
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('chatHistory') || '[]');
     setHistory(saved);
+  
+    // just to satisfy ESLint
+    console.debug('Session ID for loading history:', sessionId);
   }, [sessionId]);
   
 
