@@ -60,7 +60,7 @@ export default function ChatBot() {
     setTypingText('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/chat', { prompt: input });
+      const res = await axios.post('https://welfora-1.onrender.com/api/chat', { prompt: input });
       const responseText = res.data.response || 'No reply';
 
       let currentIndex = 0;
@@ -74,7 +74,7 @@ export default function ChatBot() {
           setLoading(false);
         }
       }, 15);
-    } catch {
+    } catch (err) {
       setMessages(prev => [...prev, { role: 'ai', text: '⚠️ Error fetching response' }]);
       setLoading(false);
     }

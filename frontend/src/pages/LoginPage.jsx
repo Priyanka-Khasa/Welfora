@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './ChatBot.css'; 
+import './ChatBot.css';
+
+const backendURL = 'https://welfora-1.onrender.com';
 
 const LoginPage = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -18,20 +20,28 @@ const LoginPage = ({ onLogin }) => {
   };
 
   const handleSubmit = async () => {
-    const url = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const { email, password, name } = form;
+    if (!email || !password || (isRegister && !name)) {
+      return setMessage('⚠️ Please fill all required fields.');
+    }
+
+    const url = isRegister
+      ? `${backendURL}/api/auth/register`
+      : `${backendURL}/api/auth/login`;
 
     try {
       const res = await axios.post(url, form);
+
       if (res.data.token) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         onLogin(res.data.user);
       } else {
-        setMessage(res.data.message || 'Registered! Now log in.');
+        setMessage(res.data.message || '✔️ Registered! Please log in.');
         if (isRegister) setIsRegister(false);
       }
     } catch (err) {
-      setMessage(err.response?.data || 'Something went wrong');
+      setMessage(err.response?.data?.message || '❌ Something went wrong');
     }
   };
 
@@ -42,12 +52,24 @@ const LoginPage = ({ onLogin }) => {
       {isRegister && (
         <>
           <label>Name</label>
-          <input type="text" name="name" placeholder="Enter your name" value={form.name} onChange={handleChange} />
+          <input
+            type="text"
+            name="name"
+            placeholder="Enter your name"
+            value={form.name}
+            onChange={handleChange}
+          />
         </>
       )}
 
       <label>Email</label>
-      <input type="email" name="email" placeholder="Enter email" value={form.email} onChange={handleChange} />
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter email"
+        value={form.email}
+        onChange={handleChange}
+      />
 
       <label>Password</label>
       <div className="password-wrapper">

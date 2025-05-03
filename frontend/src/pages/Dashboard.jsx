@@ -5,18 +5,25 @@ import {
 } from 'recharts';
 import Loader from './Loader';
 
-
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/dashboard')
-      .then(res => setStats(res.data))
-      .catch(err => console.error('Dashboard error', err));
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get('https://welfora-1.onrender.com/api/dashboard');
+        setStats(res.data);
+      } catch (err) {
+        console.error('❌ Dashboard error:', err);
+      }
+    };
 
-    // Sync with body class
-    setTheme(document.body.classList.contains('dark') ? 'dark' : 'light');
+    fetchStats();
+
+    // Detect initial theme
+    const bodyTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+    setTheme(bodyTheme);
   }, []);
 
   if (!stats) return <Loader />;
@@ -52,7 +59,9 @@ const Dashboard = () => {
       </ResponsiveContainer>
 
       <h4 style={{ color: textColor }}>🏆 Top Answer</h4>
-      <p style={{ color: textColor }}>{stats.topAnswer?.text} ({stats.topAnswer?.upvotes} upvotes)</p>
+      <p style={{ color: textColor }}>
+        {stats.topAnswer?.text} ({stats.topAnswer?.upvotes} upvotes)
+      </p>
     </div>
   );
 };

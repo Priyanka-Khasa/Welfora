@@ -4,7 +4,7 @@ import './AskQuestion.css';
 
 const CommunityQA = () => {
   const [questions, setQuestions] = useState([]);
-  const [newAnswers, setNewAnswers] = useState({}); // track input per question
+  const [newAnswers, setNewAnswers] = useState({}); // Track answer input per question
 
   useEffect(() => {
     loadQuestions();
@@ -12,19 +12,19 @@ const CommunityQA = () => {
 
   const loadQuestions = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/questions');
+      const res = await axios.get('https://welfora-1.onrender.com/api/questions');
       setQuestions(res.data);
     } catch (err) {
-      console.error('Failed to load questions:', err);
+      console.error('❌ Failed to load questions:', err);
     }
   };
 
   const vote = async (qid, aid, type) => {
     try {
-      await axios.patch(`http://localhost:5000/api/questions/${qid}/answers/${aid}/${type}`);
+      await axios.patch(`https://welfora-1.onrender.com/api/questions/${qid}/answers/${aid}/${type}`);
       loadQuestions();
     } catch (err) {
-      console.error('Voting failed:', err);
+      console.error('❌ Voting failed:', err);
     }
   };
 
@@ -33,15 +33,15 @@ const CommunityQA = () => {
   };
 
   const postAnswer = async (qid) => {
-    if (!newAnswers[qid]?.trim()) return;
+    const answer = newAnswers[qid]?.trim();
+    if (!answer) return;
+
     try {
-      await axios.post(`http://localhost:5000/api/questions/${qid}/answers`, {
-        text: newAnswers[qid]
-      });
+      await axios.post(`https://welfora-1.onrender.com/api/questions/${qid}/answers`, { text: answer });
       setNewAnswers(prev => ({ ...prev, [qid]: '' }));
       loadQuestions();
     } catch (err) {
-      console.error('Failed to post answer:', err);
+      console.error('❌ Failed to post answer:', err);
     }
   };
 

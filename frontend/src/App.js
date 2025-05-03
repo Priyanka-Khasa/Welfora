@@ -20,7 +20,7 @@ function App() {
       setUser(JSON.parse(userInfo));
     }
 
-    // Restore theme
+    // Load saved theme
     const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
     document.body.className = savedTheme;
@@ -45,12 +45,10 @@ function App() {
     <>
       <div className="main-container">
         <div className="tab-header">
-          {/* Left: Logo */}
           <div className="tab-left">
             <span className="logo">🧠 Welfora</span>
           </div>
 
-          {/* Center: Navigation Tabs */}
           <div className="tab-center">
             <button
               title="Post or browse scheme-related questions"
@@ -84,7 +82,6 @@ function App() {
             )}
           </div>
 
-          {/* Right: User Info + Theme + Logout */}
           <div className="tab-right">
             <span className="welcome-text">
               Welcome, {user.name} ({user.role})
@@ -104,7 +101,6 @@ function App() {
         </div>
       </div>
 
-      {/* Toast messages */}
       <ToastContainer position="top-center" autoClose={2000} />
     </>
   );

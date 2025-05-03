@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = () => {
@@ -6,28 +6,41 @@ const AdminDashboard = () => {
 
   const config = {
     headers: {
-      Authorization: 'Bearer admin123' // 🔐 admin-only token
+      Authorization: 'Bearer admin123'
     }
   };
 
-  const fetchQuestions = async () => {
-    const res = await axios.get('http://localhost:5000/api/admin/questions');
-    setQuestions(res.data);
-  };
+  // ✅ Wrap in useCallback to avoid ESLint warning
+  const fetchQuestions = useCallback(async () => {
+    try {
+      const res = await axios.get('https://welfora-1.onrender.com/api/admin/questions', config);
+      setQuestions(res.data);
+    } catch (err) {
+      console.error('Error fetching questions:', err);
+    }
+  }, []);
 
   const deleteQuestion = async (id) => {
-    await axios.delete(`http://localhost:5000/api/admin/questions/${id}`, config);
-    fetchQuestions();
+    try {
+      await axios.delete(`https://welfora-1.onrender.com/api/admin/questions/${id}`, config);
+      fetchQuestions();
+    } catch (err) {
+      console.error('Error deleting question:', err);
+    }
   };
 
   const deleteAnswer = async (qid, aid) => {
-    await axios.delete(`http://localhost:5000/api/admin/questions/${qid}/answers/${aid}`, config);
-    fetchQuestions();
+    try {
+      await axios.delete(`https://welfora-1.onrender.com/api/admin/questions/${qid}/answers/${aid}`, config);
+      fetchQuestions();
+    } catch (err) {
+      console.error('Error deleting answer:', err);
+    }
   };
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [fetchQuestions]); // ✅ ESLint safe
 
   return (
     <div className="admin">
@@ -36,13 +49,12 @@ const AdminDashboard = () => {
         <div key={q._id} className="card">
           <h4>Q: {q.text}</h4>
           <button onClick={() => deleteQuestion(q._id)}>❌ Delete Question</button>
-
           <ul style={{ marginTop: '8px' }}>
             {q.answers.map((a, idx) => (
               <li key={idx}>
                 {a.text}
                 <button style={{ marginLeft: '10px' }} onClick={() => deleteAnswer(q._id, a._id)}>
-                   Delete Answer
+                  Delete Answer
                 </button>
               </li>
             ))}

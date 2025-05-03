@@ -14,8 +14,12 @@ export default function AskQuestion({ user }) {
   };
 
   const loadQuestions = async () => {
-    const res = await axios.get('http://localhost:5000/api/questions');
-    setQuestions(res.data.reverse());
+    try {
+      const res = await axios.get('https://welfora-1.onrender.com/api/questions');
+      setQuestions(res.data.reverse());
+    } catch (err) {
+      console.error('Error loading questions:', err);
+    }
   };
 
   const submitQuestion = async () => {
@@ -26,27 +30,35 @@ export default function AskQuestion({ user }) {
     );
     if (exists) return alert('Question already exists');
 
-    await axios.post('http://localhost:5000/api/questions', { text }, config);
-    setText('');
-    loadQuestions();
+    try {
+      await axios.post('https://welfora-1.onrender.com/api/questions', { text }, config);
+      setText('');
+      loadQuestions();
+    } catch (err) {
+      console.error('Error submitting question:', err);
+    }
   };
 
   const submitAnswer = async (id) => {
     const answer = answerInputs[id];
     if (!answer?.trim()) return;
 
-    await axios.post(
-      `http://localhost:5000/api/questions/${id}/answers`,
-      { text: answer },
-      config
-    );
-    setAnswerInputs((prev) => ({ ...prev, [id]: '' }));
-    loadQuestions();
+    try {
+      await axios.post(
+        `https://welfora-1.onrender.com/api/questions/${id}/answers`,
+        { text: answer },
+        config
+      );
+      setAnswerInputs((prev) => ({ ...prev, [id]: '' }));
+      loadQuestions();
+    } catch (err) {
+      console.error('Error submitting answer:', err);
+    }
   };
 
   const vote = async (qid, aid, type) => {
     try {
-      await axios.patch(`http://localhost:5000/api/questions/${qid}/answers/${aid}/${type}`);
+      await axios.patch(`https://welfora-1.onrender.com/api/questions/${qid}/answers/${aid}/${type}`);
       loadQuestions();
     } catch (err) {
       console.error('Voting error:', err);
@@ -56,7 +68,7 @@ export default function AskQuestion({ user }) {
   const verifyAnswer = async (qid, aid) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/admin/questions/${qid}/answers/${aid}/verify`,
+        `https://welfora-1.onrender.com/api/admin/questions/${qid}/answers/${aid}/verify`,
         {},
         config
       );
@@ -85,7 +97,6 @@ export default function AskQuestion({ user }) {
         <button className="btn" onClick={submitQuestion}>Submit</button>
       </div>
 
-      {/* 🔍 Smart Suggestions */}
       {text.length > 1 && (
         <div className="suggestions">
           <p>Matching Questions:</p>
