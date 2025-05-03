@@ -40,22 +40,12 @@ export default function ChatBot() {
 
     localStorage.setItem('chatHistory', JSON.stringify(newHistory));
     setHistory(newHistory);
-  }, [messages]);
+  }, [messages, sessionId]);
 
   useEffect(() => {
-    if (!sessionId || messages.length === 0) return;
-    const newHistory = [...(JSON.parse(localStorage.getItem('chatHistory') || '[]'))];
-    const existingIndex = newHistory.findIndex(h => h.id === sessionId);
-    const sessionData = { id: sessionId, title: messages[0]?.text?.slice(0, 20), messages };
-  
-    if (existingIndex >= 0) newHistory[existingIndex] = sessionData;
-    else newHistory.push(sessionData);
-  
-    localStorage.setItem('chatHistory', JSON.stringify(newHistory));
-    setHistory(newHistory);
-  }, [messages, sessionId]); // ✅ added sessionId here
-  
-  
+    const saved = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    setHistory(saved);
+  }, [sessionId]);
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
