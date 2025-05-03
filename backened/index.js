@@ -18,7 +18,10 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: "https://welfora.netlify.app",
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
