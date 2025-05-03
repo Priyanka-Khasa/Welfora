@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = () => {
   const [questions, setQuestions] = useState([]);
 
-  const config = {
+  // ✅ Memoize config to prevent ESLint warning
+  const config = useMemo(() => ({
     headers: {
       Authorization: 'Bearer admin123'
     }
-  };
+  }), []);
 
-  // ✅ Wrap in useCallback to avoid ESLint warning
   const fetchQuestions = useCallback(async () => {
     try {
       const res = await axios.get('https://welfora-1.onrender.com/api/admin/questions', config);
@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Error fetching questions:', err);
     }
-  }, []);
+  }, [config]);
 
   const deleteQuestion = async (id) => {
     try {
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, [fetchQuestions]); // ✅ ESLint safe
+  }, [fetchQuestions]);
 
   return (
     <div className="admin">
