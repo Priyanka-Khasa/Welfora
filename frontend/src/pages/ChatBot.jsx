@@ -43,15 +43,18 @@ export default function ChatBot() {
   }, [messages]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-    setHistory(saved);
+    if (!sessionId || messages.length === 0) return;
+    const newHistory = [...(JSON.parse(localStorage.getItem('chatHistory') || '[]'))];
+    const existingIndex = newHistory.findIndex(h => h.id === sessionId);
+    const sessionData = { id: sessionId, title: messages[0]?.text?.slice(0, 20), messages };
   
-    // 👇 This satisfies ESLint rule
-    if (sessionId) {
-      // Using sessionId explicitly
-      console.debug("Loaded history for session:", sessionId);
-    }
-  }, [sessionId]);
+    if (existingIndex >= 0) newHistory[existingIndex] = sessionData;
+    else newHistory.push(sessionData);
+  
+    localStorage.setItem('chatHistory', JSON.stringify(newHistory));
+    setHistory(newHistory);
+  }, [messages, sessionId]); // ✅ added sessionId here
+  
   
 
   const scrollToBottom = () => {
