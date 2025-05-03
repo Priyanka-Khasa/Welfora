@@ -46,8 +46,11 @@ export default function ChatBot() {
     const saved = JSON.parse(localStorage.getItem('chatHistory') || '[]');
     setHistory(saved);
   
-    // just to satisfy ESLint
-    console.debug('Session ID for loading history:', sessionId);
+    // 👇 This satisfies ESLint rule
+    if (sessionId) {
+      // Using sessionId explicitly
+      console.debug("Loaded history for session:", sessionId);
+    }
   }, [sessionId]);
   
 
