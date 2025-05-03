@@ -46,6 +46,7 @@ export default function ChatBot() {
     const saved = JSON.parse(localStorage.getItem('chatHistory') || '[]');
     setHistory(saved);
   }, [sessionId]);
+  
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
